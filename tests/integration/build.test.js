@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { after, describe, test } from 'node:test';
 import { ROOT, analyze, readEnv } from '../../src/build.js';
@@ -605,6 +606,23 @@ describe('build: 受け入れテスト', () => {
     const second = await snapshot(path.join(root, 'dist'));
     assert.deepEqual([...second.keys()], [...first.keys()]);
     for (const [k, v] of first) assert.ok(v.equals(/** @type {Buffer} */ (second.get(k))), `${k} が違う`);
+  });
+
+  test('16. ビルドを実行する場所が違っても、dist/ はバイト単位で一致する', async () => {
+    const root = await tempRoot();
+    roots.push(root);
+    const elsewhere = await fs.mkdtemp(path.join(os.tmpdir(), 'enaga-cwd-'));
+    roots.push(elsewhere);
+    assert.deepEqual((await buildIn(root, '/', '')).errors, []);
+    const env = { ...process.env };
+    for (const k of ['SITE_BASE_PATH', 'SITE_REPO_URL', 'MATHENAGA_BASE_PATH', 'MATHENAGA_REPO_URL']) delete env[k];
+    const cli = [path.join(ROOT, 'src/cli.js'), 'build', '--content', path.join(root, 'content')];
+    const r = spawnSync(process.execPath, cli, { cwd: elsewhere, env, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+    const here = await snapshot(path.join(root, 'dist'));
+    const there = await snapshot(path.join(elsewhere, 'dist'));
+    assert.deepEqual([...there.keys()], [...here.keys()]);
+    for (const [k, v] of here) assert.ok(v.equals(/** @type {Buffer} */ (there.get(k))), `${k} が違う`);
   });
 
   test('17. 壊した原稿では終了コード相当の失敗になり、dist/ は残る', async () => {
