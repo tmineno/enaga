@@ -120,6 +120,9 @@ export async function themeCss() {
 export async function clientScript(site) {
   const out = await esbuild({
     entryPoints: [path.join(UI, 'client', 'index.js')],
+    // まとめたスクリプトに入るモジュールの場所の注釈を、enaga のパッケージのルートから数える。
+    // 既定(実行した場所)のままだと、実行した場所やインストールした場所で中身と版の印が変わる。
+    absWorkingDir: path.resolve(UI, '..', '..'),
     bundle: true,
     write: false,
     format: 'iife',
