@@ -1,6 +1,6 @@
 {
   "name": "enaga",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Markdown の原稿から、路線図のある静的な教材サイトを作るツール",
   "type": "module",
