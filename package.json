@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "description": "Markdown の原稿から、路線図のある静的な教材サイトを作るツール",
+  "license": "MIT",
   "type": "module",
   "bin": {
     "enaga": "src/cli.js"

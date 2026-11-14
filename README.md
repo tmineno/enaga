@@ -50,3 +50,7 @@ npm run lint && npm run typecheck && npm run format:check
 - 版はタグ(`v0.1.0` など)で配る。npm には公開しない([ADR-010](docs/adr/ADR-010-separate-repository.md))。
 
 変更はブランチから PR を作り、CI の `check` が通ってからマージする。
+
+## ライセンス
+
+MIT([LICENSE](LICENSE))
